@@ -1,3 +1,14 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# תוצרים נגזרים — נוצרים מחדש ע"י הסקריפטים ב-_build/
+_build/marked/
+_build/*.pdf
+_build/*.docx
+_build/_mk*.html
+_build/_standalone.html
+
+# הצילומים לפני הטשטוש — לעולם לא בריפו ציבורי
+img-orig/
+_build/img-orig/

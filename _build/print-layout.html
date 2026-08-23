@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>העלאת יומן מקובץ ICS ל-Outlook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ פלטה א — בורדו רגוע ============ */
+[data-palette="a"]{
+  --ink:#2A1F22; --ink-soft:#6B5A5E; --ink-faint:#9A8A8E;
+  --bg:#FBF7F4; --surface:#FFFFFF; --line:#EADFD9;
+  --brand:#7A2233; --brand-deep:#571522; --brand-tint:#F6E9EA;
+  --shadow-c:42,31,34;
+}
+/* ============ פלטה ב — כחול דיו ============ */
+[data-palette="b"]{
+  --ink:#1B2430; --ink-soft:#586573; --ink-faint:#8B97A4;
+  --bg:#F6F8FB; --surface:#FFFFFF; --line:#E1E8F0;
+  --brand:#1F4E79; --brand-deep:#12385A; --brand-tint:#E8F0F8;
+  --shadow-c:27,36,48;
+}
+/* ============ פלטה ג — טורקיז אדמה ============ */
+[data-palette="c"]{
+  --ink:#20302E; --ink-soft:#5A6B68; --ink-faint:#8FA09D;
+  --bg:#FAF6EF; --surface:#FFFFFF; --line:#E8E0D3;
+  --brand:#12706B; --brand-deep:#0B4F4B; --brand-tint:#E3F1EF;
+  --shadow-c:32,48,46;
+}
+
+/* צבע ההדגשה — פונקציונלי, קבוע בכל הפלטות */
+:root{
+  --mark:#FF6A00; --mark-deep:#D95700; --mark-glow:255,106,0;
+  --warn:#B45309; --warn-bg:#FEF6E7; --warn-line:#F0D9A8;
+  --r:14px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Assistant",Segoe UI,Arial,sans-serif;
+  font-size:16px; line-height:1.55; letter-spacing:-0.01em;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1340px; margin:0 auto; padding:0 28px 56px}
+
+
+/* ---------- כותרת ראשית ---------- */
+.hero{
+  margin-top:22px; padding:28px 36px 26px;
+  background:linear-gradient(160deg,var(--brand-deep),var(--brand));
+  color:#fff; border-radius:22px;
+  box-shadow:0 18px 44px -18px rgba(var(--shadow-c),.55), 0 2px 6px rgba(var(--shadow-c),.10);
+  position:relative; overflow:hidden;
+}
+.hero::after{
+  content:""; position:absolute; inset:auto -80px -140px auto;
+  width:340px; height:340px; border-radius:50%;
+  background:rgba(255,255,255,.055);
+}
+.hero .kicker{
+  font-size:12px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; opacity:.72; margin:0 0 12px;
+}
+.hero h1{
+  margin:0; font-size:32px; line-height:1.18; font-weight:800; letter-spacing:-0.02em;
+}
+.hero p{margin:10px 0 0; font-size:17px; opacity:.9; max-width:60ch}
+
+/* ---------- לפני שמתחילים ---------- */
+.pre{
+  margin-top:18px; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r); padding:18px 24px;
+  box-shadow:0 8px 22px -14px rgba(var(--shadow-c),.35);
+}
+.pre h2{margin:0 0 9px; font-size:18px; font-weight:700}
+.pre ul{margin:0; padding-inline-start:22px; color:var(--ink-soft)}
+.pre li{margin:6px 0}
+.pre code{
+  background:var(--brand-tint); color:var(--brand-deep);
+  padding:1px 7px; border-radius:6px; font-family:inherit; font-weight:600;
+}
+
+/* ---------- תוכן עניינים ---------- */
+.toc{margin-top:18px}
+.toc h2{font-size:15px; font-weight:700; color:var(--ink-faint); letter-spacing:.05em; margin:0 0 12px}
+.toc ol{list-style:none; margin:0; padding:0; display:grid; gap:8px;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
+.toc a{
+  display:flex; align-items:center; gap:10px; text-decoration:none;
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:9px 13px; color:var(--ink); font-weight:600; font-size:15px;
+  transition:.16s;
+}
+.toc a:hover{border-color:var(--brand); transform:translateY(-1px);
+  box-shadow:0 6px 16px -8px rgba(var(--shadow-c),.4)}
+.toc .n{
+  flex:0 0 27px; height:27px; border-radius:8px; background:var(--brand-tint);
+  color:var(--brand-deep); display:grid; place-items:center; font-weight:800; font-size:14px;
+}
+
+/* ---------- שלב ---------- */
+.step{
+  margin-top:22px; background:var(--surface);
+  border:1px solid var(--line); border-radius:20px; overflow:hidden;
+  box-shadow:0 14px 34px -20px rgba(var(--shadow-c),.45), 0 1px 3px rgba(var(--shadow-c),.06);
+  scroll-margin-top:70px;
+}
+.step-head{
+  display:flex; align-items:center; gap:14px;
+  padding:14px 24px; border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,var(--brand-tint),transparent 65%);
+}
+.step-head .num{
+  flex:0 0 36px; height:36px; border-radius:12px;
+  background:var(--brand); color:#fff;
+  display:grid; place-items:center; font-weight:800; font-size:20px;
+  box-shadow:0 6px 14px -6px rgba(var(--shadow-c),.55);
+}
+.step-head h3{margin:0; font-size:21px; font-weight:700; letter-spacing:-0.02em}
+.step-head .sub{margin:2px 0 0; font-size:14.5px; color:var(--ink-soft); font-weight:400}
+
+.step-body{display:block}
+
+/* ---------- רשימת פעולות ---------- */
+.acts{padding:18px 26px 16px; max-width:1000px}
+.acts ol{list-style:none; margin:0; padding:0}
+.acts li{display:flex; gap:12px; margin:0 0 12px}
+.acts li:last-child{margin-bottom:0}
+
+.tag{
+  flex:0 0 auto; min-width:38px; height:29px; padding:0 9px;
+  border-radius:9px; background:var(--mark); color:#fff;
+  display:grid; place-items:center; font-weight:800; font-size:15.5px;
+  box-shadow:0 3px 9px -3px rgba(var(--mark-glow),.75);
+}
+.acts .txt{padding-top:1px}
+.acts b{font-weight:700; color:var(--brand-deep)}
+.acts kbd{
+  font-family:inherit; font-weight:700; font-size:.92em;
+  background:var(--ink); color:#fff; padding:1px 8px; border-radius:6px;
+}
+.hint{
+  margin-top:5px; font-size:14.5px; color:var(--ink-soft);
+  border-inline-start:3px solid var(--line); padding-inline-start:11px;
+}
+.why{
+  background:var(--brand-tint); border-radius:10px; padding:11px 15px;
+  font-size:14.5px; color:var(--brand-deep); margin:0 0 14px;
+}
+.why b{font-weight:700}
+.alert{
+  background:var(--warn-bg); border:1px solid var(--warn-line); border-radius:11px;
+  padding:11px 15px; font-size:14.5px; color:var(--warn); margin:0 0 14px; font-weight:600;
+}
+
+/* ---------- צילום מסך + הדגשות ---------- */
+.shot{margin:0; padding:4px 26px 22px;
+  background:
+    linear-gradient(0deg,rgba(var(--shadow-c),.03),rgba(var(--shadow-c),.03)),
+    var(--surface);
+  border-top:1px solid var(--line);
+}
+.shot > div{max-width:100%; margin:0 auto; width:max-content}
+.frame{
+  position:relative; display:block; width:100%; margin:14px auto 0;
+  border-radius:11px;
+  box-shadow:0 14px 34px -18px rgba(var(--shadow-c),.55);
+}
+.frame img{
+  display:block; width:100%; height:auto;
+  border-radius:11px; border:1px solid var(--line);
+}
+
+/* ההדגשה עצמה */
+.mk{
+  position:absolute; box-sizing:border-box;
+  border:3px solid var(--mark); border-radius:8px;
+  box-shadow:0 0 0 3px rgba(var(--mark-glow),.22), 0 0 16px rgba(var(--mark-glow),.45);
+  pointer-events:none;
+}
+.mk.circle{border-radius:50%}
+.mk .lbl{
+  position:absolute; min-width:32px; height:27px; padding:0 9px;
+  background:var(--mark); color:#fff; border-radius:8px;
+  font-weight:800; font-size:15px; line-height:27px; text-align:center;
+  white-space:nowrap;
+  box-shadow:0 3px 10px -2px rgba(var(--mark-glow),.85), 0 0 0 2px #fff;
+}
+/* מיקומי הבאדג' סביב המסגרת */
+.lbl.tl{bottom:calc(100% + 5px); inset-inline-start:-3px}
+.lbl.tr{bottom:calc(100% + 5px); inset-inline-end:-3px}
+.lbl.bl{top:calc(100% + 5px); inset-inline-start:-3px}
+.lbl.out-s{top:50%; transform:translateY(-50%); inset-inline-start:calc(100% + 10px)}
+.lbl.out-e{top:50%; transform:translateY(-50%); inset-inline-end:calc(100% + 10px)}
+
+.caption{
+  margin-top:9px; font-size:13.5px; color:var(--ink-faint); text-align:center;
+}
+
+/* ---------- סיום ---------- */
+.outro{
+  margin-top:24px; background:var(--surface); border:1px solid var(--line);
+  border-radius:18px; padding:22px 28px;
+  box-shadow:0 14px 34px -20px rgba(var(--shadow-c),.45);
+}
+.outro h2{margin:0 0 6px; font-size:24px; font-weight:800; letter-spacing:-0.02em}
+.outro > p{margin:0 0 22px; color:var(--ink-soft)}
+.faq{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.faq div{
+  background:var(--bg); border:1px solid var(--line); border-radius:13px; padding:16px 18px;
+}
+.faq h4{margin:0 0 6px; font-size:16px; font-weight:700; color:var(--brand-deep)}
+.faq p{margin:0; font-size:15px; color:var(--ink-soft)}
+.sign{
+  margin-top:30px; text-align:center; font-size:14px; color:var(--ink-faint);
+}
+
+/* ---------- הדפסה / PDF — שלב לעמוד ---------- */
+/* ---------- print ---------- */
+@page{ size:A4 landscape; margin:10mm 11mm; }
+@media print{
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{background:#fff; font-size:10.5pt}
+  .wrap{max-width:none; padding:0}
+  .hero{margin-top:0; border-radius:14px; box-shadow:none}
+  .pre,.toc,.outro{break-inside:avoid; box-shadow:none}
+  .toc{break-after:page}
+
+  .step{margin:0; box-shadow:none; break-inside:avoid; break-after:page}
+  .step:last-of-type{break-after:auto}
+  .step-head{padding:11px 22px}
+  .acts{padding:12px 22px 10px; max-width:none}
+  .acts ol{column-count:2; column-gap:30px}
+  .acts li{break-inside:avoid; margin:0 0 10px}
+  .why,.alert{margin:0 0 10px; padding:9px 13px}
+  .shot{padding:2px 20px 12px}
+  .frame{margin:8px auto 0; box-shadow:0 4px 12px -8px rgba(var(--shadow-c),.5)}
+  .caption{margin-top:6px}
+  #f1{max-width:705px !important}
+  #f2{max-width:223px !important}
+  #f3{max-width:747px !important}
+  #f4{max-width:1032px !important}
+  #f5{max-width:888px !important}
+  #f6{max-width:962px !important}
+  #f7{max-width:1032px !important}
+  #f8{max-width:1032px !important}
+}
+</style>
+</head>
+<body data-palette="b">
+
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">מדריך הפעלה</p>
+    <h1>העלאת יומן מקובץ ICS<br>ליומן Outlook</h1>
+    <p>שמונה שלבים, מהרגע שפותחים את Outlook ועד שהאירועים מופיעים ביומן — עם סימון מדויק של כל מקום שצריך ללחוץ עליו.</p>
+  </header>
+
+  <section class="pre">
+    <h2>לפני שמתחילים</h2>
+    <ul>
+      <li>קובץ <code>.ics</code> שמור על המחשב — בדרך כלל בתיקיית <code>Downloads</code>.</li>
+      <li>Outlook פתוח (גרסת הדפדפן או אפליקציית שולחן העבודה — המסכים זהים).</li>
+      <li>המדריך יוצר <b>לוח שנה נפרד</b> לאירועים החדשים, כדי שלא יתערבבו ביומן האישי.</li>
+    </ul>
+  </section>
+
+  <nav class="toc">
+    <h2>שמונה השלבים</h2>
+    <ol>
+      <li><a href="#s1"><span class="n">1</span>נכנסים ליומן</a></li>
+      <li><a href="#s2"><span class="n">2</span>פותחים "הוסף לוח שנה"</a></li>
+      <li><a href="#s3"><span class="n">3</span>יוצרים לוח שנה ייעודי</a></li>
+      <li><a href="#s4"><span class="n">4</span>פותחים את מסך ההעלאה</a></li>
+      <li><a href="#s5"><span class="n">5</span>בוחרים את קובץ ה-ICS</a></li>
+      <li><a href="#s6"><span class="n">6</span>בוחרים לאיזה לוח להעלות</a></li>
+      <li><a href="#s7"><span class="n">7</span>מוסיפים ללוח השנה</a></li>
+      <li><a href="#s8"><span class="n">8</span>בודקים שהצליח</a></li>
+    </ol>
+  </nav>
+
+  <!-- ========== 1 ========== -->
+  <section class="step" id="s1">
+    <div class="step-head">
+      <div class="num">1</div>
+      <div>
+        <h3>נכנסים ליומן</h3>
+        <p class="sub">מעבר מתיבת הדואר אל אפליקציית היומן</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">1</span>
+            <div class="txt">
+              בסרגל האייקונים שבקצה <b>ימין</b> של החלון, לחצי על אייקון <b>היומן</b> — הריבוע הכחול עם הנקודות.
+              <div class="hint">הוא נמצא ישר מתחת לאייקון הדואר (המעטפה הכחולה).</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f1" style="max-width:755px">
+            <img src="img/step-01.png" alt="מסך הדואר של Outlook, סרגל האייקונים בצד ימין">
+            <div class="mk circle" style="left:93.6%;top:17.4%;width:5.3%;height:7.7%">
+              <span class="lbl out-e">1</span>
+            </div>
+          </div>
+          <figcaption class="caption">מסך הדואר — אייקון היומן בסרגל הימני</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 2 ========== -->
+  <section class="step" id="s2">
+    <div class="step-head">
+      <div class="num">2</div>
+      <div>
+        <h3>פותחים את "הוסף לוח שנה"</h3>
+        <p class="sub">החלונית שממנה עושים את כל השאר</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">2</span>
+            <div class="txt">
+              בסרגל הצדדי של היומן, מתחת ללוח החודשי, לחצי על <b>"הוסף לוח שנה"</b>.
+              <div class="hint">אם הסרגל סגור — לחצי על אייקון התפריט (☰) בפינה השמאלית העליונה כדי לפתוח אותו.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f2" style="max-width:348px">
+            <img src="img/step-02.png" alt="הסרגל הצדדי של היומן עם הקישור הוסף לוח שנה">
+            <div class="mk" style="left:52.6%;top:35.6%;width:32.2%;height:5.1%">
+              <span class="lbl bl">2</span>
+            </div>
+          </div>
+          <figcaption class="caption">הסרגל הצדדי של היומן</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 3 ========== -->
+  <section class="step" id="s3">
+    <div class="step-head">
+      <div class="num">3</div>
+      <div>
+        <h3>יוצרים לוח שנה ייעודי</h3>
+        <p class="sub">ארבע פעולות במסך אחד</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <p class="why"><b>למה לא ישר ליומן הראשי?</b> לוח נפרד אפשר להסתיר בלחיצה, לצבוע בצבע משלו, ולמחוק כולו בבת אחת אם התחרטת. ביומן הראשי האירועים מתערבבים ואי אפשר להפריד אותם בחזרה.</p>
+        <ol>
+          <li>
+            <span class="tag">3א</span>
+            <div class="txt">בתפריט הימני לחצי על <b>"צור לוח שנה ריק"</b>.</div>
+          </li>
+          <li>
+            <span class="tag">3ב</span>
+            <div class="txt">
+              הקלידי <b>שם</b> ללוח.
+              <div class="hint">שם שיהיה ברור בעוד חצי שנה — למשל "גאנט - תשפ״ז", לא "יומן 2".</div>
+            </div>
+          </li>
+          <li>
+            <span class="tag">3ג</span>
+            <div class="txt">
+              בחרי <b>צבע</b>.
+              <div class="hint">זה הצבע שכל האירועים יקבלו ביומן. שווה לבחור צבע שלא בשימוש כבר.</div>
+            </div>
+          </li>
+          <li>
+            <span class="tag">3ד</span>
+            <div class="txt">
+              לחצי <b>"שמור"</b>.
+              <div class="hint">אפשר גם לבחור "קמע" (אייקון קטן) מהרשימה שבאמצע — לא חובה.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f3" style="max-width:1271px">
+            <img src="img/step-03.png" alt="מסך יצירת לוח שנה ריק — שם, צבע, קמע וכפתור שמור">
+            <div class="mk" style="left:82.2%;top:29.73%;width:17.8%;height:6.32%">
+              <span class="lbl tl">3א</span>
+            </div>
+            <div class="mk" style="left:49.0%;top:18.09%;width:32.4%;height:6.07%">
+              <span class="lbl tl">3ב</span>
+            </div>
+            <div class="mk" style="left:47.4%;top:32.58%;width:33.8%;height:5.70%">
+              <span class="lbl tl">3ג</span>
+            </div>
+            <div class="mk" style="left:74.2%;top:89.19%;width:7.2%;height:5.82%">
+              <span class="lbl out-e">3ד</span>
+            </div>
+          </div>
+          <figcaption class="caption">מסך "צור לוח שנה ריק"</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 4 ========== -->
+  <section class="step" id="s4">
+    <div class="step-head">
+      <div class="num">4</div>
+      <div>
+        <h3>פותחים את מסך ההעלאה</h3>
+        <p class="sub">חוזרים לאותה חלונית, לשורה אחרת בתפריט</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">4א</span>
+            <div class="txt">בתפריט הימני לחצי על <b>"העלה מקובץ"</b>.</div>
+          </li>
+          <li>
+            <span class="tag">4ב</span>
+            <div class="txt">
+              לחצי על <b>"עיון"</b>.
+              <div class="hint">בצילום שדה הקובץ כבר מלא — אצלך הוא יהיה ריק בשלב הזה. זה בסדר.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f4" style="max-width:1276px">
+            <img src="img/step-04.png" alt="מסך העלה מקובץ עם כפתור עיון">
+            <div class="mk" style="left:82.8%;top:58.98%;width:17.2%;height:7.18%">
+              <span class="lbl tl">4א</span>
+            </div>
+            <div class="mk" style="left:41.9%;top:21.53%;width:7.2%;height:6.46%">
+              <span class="lbl tl">4ב</span>
+            </div>
+          </div>
+          <figcaption class="caption">מסך "העלה מקובץ"</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 5 ========== -->
+  <section class="step" id="s5">
+    <div class="step-head">
+      <div class="num">5</div>
+      <div>
+        <h3>בוחרים את קובץ ה-ICS</h3>
+        <p class="sub">חלון בחירת הקבצים של Windows</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">5א</span>
+            <div class="txt">
+              אתרי את קובץ ה-<code style="background:var(--brand-tint);color:var(--brand-deep);padding:1px 6px;border-radius:5px;font-family:inherit;font-weight:600">.ics</code> ולחצי עליו פעם אחת.
+              <div class="hint">ברוב המקרים הוא בתיקיית <b>Downloads</b>, תחת "היום".</div>
+            </div>
+          </li>
+          <li>
+            <span class="tag">5ב</span>
+            <div class="txt">לחצי <kbd>Open</kbd>.</div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f5" style="max-width:1217px">
+            <img src="img/step-05.png" alt="חלון בחירת קובץ של Windows עם קובץ ICS מסומן">
+            <div class="mk" style="left:30.4%;top:16.2%;width:21.8%;height:38.4%">
+              <span class="lbl tr">5א</span>
+            </div>
+            <div class="mk" style="left:82.5%;top:92.9%;width:6.6%;height:4.2%">
+              <span class="lbl out-s">5ב</span>
+            </div>
+          </div>
+          <figcaption class="caption">חלון בחירת הקבצים</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 6 ========== -->
+  <section class="step" id="s6">
+    <div class="step-head">
+      <div class="num">6</div>
+      <div>
+        <h3>בוחרים לאיזה לוח להעלות</h3>
+        <p class="sub">השלב שאסור לדלג עליו</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <p class="alert">⚠️ אם לא תבחרי כאן לוח — האירועים ייכנסו ליומן הראשי, ואי אפשר להפריד אותם בחזרה.</p>
+        <ol>
+          <li>
+            <span class="tag">6א</span>
+            <div class="txt">לחצי על השדה <b>"בחר לוח שנה"</b> כדי לפתוח את הרשימה.</div>
+          </li>
+          <li>
+            <span class="tag">6ב</span>
+            <div class="txt">
+              בחרי מהרשימה את <b>הלוח שיצרת בשלב 3</b>.
+              <div class="hint">בצילום מופיעים כמה לוחות קיימים — אצלך הלוח החדש יופיע ברשימה עם הצבע שבחרת לו.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f6" style="max-width:1276px">
+            <img src="img/step-04.png" alt="רשימת לוחות השנה הפתוחה לבחירה">
+            <div class="mk" style="left:49.6%;top:31.57%;width:32.2%;height:6.46%">
+              <span class="lbl out-e">6א</span>
+            </div>
+            <div class="mk" style="left:49.8%;top:56.54%;width:32.0%;height:6.46%">
+              <span class="lbl out-e">6ב</span>
+            </div>
+          </div>
+          <figcaption class="caption">הרשימה הנפתחת של לוחות השנה</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 7 ========== -->
+  <section class="step" id="s7">
+    <div class="step-head">
+      <div class="num">7</div>
+      <div>
+        <h3>מוסיפים ללוח השנה</h3>
+        <p class="sub">הלחיצה שמבצעת את הייבוא</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">7</span>
+            <div class="txt">
+              ודאי ששם הלוח הנכון מופיע בשדה, ולחצי על <b>"הוספה ללוח השנה"</b>.
+              <div class="hint">רוצה לראות מה נכנס לפני שמאשרים? לחצי קודם על "תצוגה מקדימה" שלידו.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f7" style="max-width:1258px">
+            <img src="img/step-06.png" alt="הלוח הנבחר וכפתור הוספה ללוח השנה">
+            <div class="mk" style="left:69.0%;top:41.48%;width:13.2%;height:6.51%">
+              <span class="lbl tl">7</span>
+            </div>
+          </div>
+          <figcaption class="caption">הלוח נבחר — נשאר ללחוץ</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========== 8 ========== -->
+  <section class="step" id="s8">
+    <div class="step-head">
+      <div class="num">8</div>
+      <div>
+        <h3>בודקים שהצליח</h3>
+        <p class="sub">איך יודעים שהאירועים באמת נכנסו</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="acts">
+        <ol>
+          <li>
+            <span class="tag">8</span>
+            <div class="txt">
+              חזרי ליומן. הלוח החדש מופיע ברשימה <b>"לוחות השנה שלי"</b> עם סימון ✓, והאירועים מופיעים בצבע שבחרת.
+              <div class="hint">לא רואה אירועים? ודאי שהעיגול ליד שם הלוח מסומן, ועברי לחודש שבו האירועים אמורים להיות.</div>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <div>
+          <div class="frame" id="f8" style="max-width:1280px">
+            <img src="img/step-07.png" alt="היומן עם האירועים שנטענו והלוח החדש מסומן ברשימה">
+            <div class="mk" style="left:90.2%;top:67.2%;width:9.1%;height:4.5%">
+              <span class="lbl out-s">8</span>
+            </div>
+          </div>
+          <figcaption class="caption">האירועים ביומן, והלוח החדש מסומן ברשימה</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="outro">
+    <h2>אם משהו השתבש</h2>
+    <p>שלוש התקלות שחוזרות הכי הרבה — וכולן הפיכות.</p>
+    <div class="faq">
+      <div>
+        <h4>האירועים נכנסו ליומן הלא נכון</h4>
+        <p>אם הם נכנסו ללוח נפרד — לחצי ימני על שם הלוח ברשימה ובחרי "הסר". הכול נמחק בבת אחת, ואפשר להתחיל מחדש משלב 4.</p>
+      </div>
+      <div>
+        <h4>לא רואים שום אירוע</h4>
+        <p>בדקי שהעיגול ליד שם הלוח מסומן — לוח לא מסומן פשוט מוסתר. אחר כך עברי לחודש שבו האירועים אמורים להיות.</p>
+      </div>
+      <div>
+        <h4>אירועים כפולים</h4>
+        <p>סימן שהקובץ הועלה פעמיים. הסירי את הלוח כולו וחזרי על שלבים 3–7 פעם אחת.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="sign">מדריך פנימי · העלאת קובץ ICS ליומן Outlook</p>
+
+</div>
+
+<script>
+</script>
+</body>
+</html>
