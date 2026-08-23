@@ -421,7 +421,7 @@ kbd{font-family:inherit; font-weight:700; font-size:.92em; background:var(--ink)
         <div class="tapzoom">🔍 הקישי על התמונה כדי להגדיל</div>
         <figcaption class="caption">האירועים ביומן, והלוח החדש מסומן ברשימה</figcaption>
       </div></figure>
-      <div class="nav"><button class="next" data-go="7">‹ חזרה לשלב הקודם</button><button class="prev" data-go="6">‹ השלב הקודם</button></div>
+      <div class="nav"><button class="next" data-done="1">סיימתי ✓</button><button class="prev" data-go="6">‹ השלב הקודם</button></div>
     </div>
   </section>
   </div>
@@ -487,6 +487,16 @@ kbd{font-family:inherit; font-weight:700; font-size:.92em; background:var(--ink)
   });
   document.querySelectorAll('[data-go]').forEach(function(b){
     b.addEventListener('click', function(){ open(parseInt(b.dataset.go,10), true); });
+  });
+  /* בשלב האחרון: סוגרים הכל וחוזרים לרשימה */
+  document.querySelectorAll('[data-done]').forEach(function(b){
+    b.addEventListener('click', function(){
+      steps.forEach(function(s){ s.classList.remove('open'); });
+      render();
+      var smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var y = document.querySelector('.steps').getBoundingClientRect().top + window.pageYOffset - 10;
+      window.scrollTo({ top:y, behavior: smooth ? 'smooth' : 'auto' });
+    });
   });
 
   /* ---- תצוגה מוגדלת ---- */
