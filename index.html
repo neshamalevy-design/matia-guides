@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מדריכי המתי״א</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B2430; --ink-soft:#55626F; --ink-faint:#8A96A3;
+  --bg:#F5F8FB; --surface:#FFFFFF; --line:#E1E8F0;
+  --brand:#1F4E79; --brand-deep:#12385A; --brand-tint:#E8F0F8;
+  --sh:27,36,48;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden; max-width:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Assistant",-apple-system,Segoe UI,Arial,sans-serif;
+  font-size:17px; line-height:1.6; letter-spacing:-0.01em;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px; margin:0 auto; padding:0 18px 60px}
+
+.hero{
+  margin-top:22px; padding:28px 30px 26px;
+  background:linear-gradient(155deg,var(--brand-deep),var(--brand));
+  color:#fff; border-radius:18px; position:relative; overflow:hidden;
+  box-shadow:0 14px 32px -16px rgba(var(--sh),.5);
+}
+.hero::after{content:""; position:absolute; inset:auto -70px -120px auto;
+  width:280px; height:280px; border-radius:50%; background:rgba(255,255,255,.05)}
+.hero h1{margin:0; font-size:28px; line-height:1.2; font-weight:800; letter-spacing:-0.02em}
+.hero p{margin:9px 0 0; font-size:16px; opacity:.9; max-width:52ch}
+
+h2{font-size:14px; font-weight:700; color:var(--ink-faint);
+   letter-spacing:.05em; margin:26px 2px 10px}
+
+.list{display:flex; flex-direction:column; gap:10px}
+.card{
+  display:flex; align-items:center; gap:15px; text-decoration:none; color:inherit;
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:16px 18px; transition:.16s;
+  box-shadow:0 5px 16px -12px rgba(var(--sh),.4);
+}
+.card:hover{border-color:#C4D6E8; transform:translateY(-1px);
+  box-shadow:0 12px 28px -16px rgba(var(--sh),.45)}
+.card:focus-visible{outline:3px solid var(--brand); outline-offset:2px}
+.ico{
+  flex:0 0 46px; height:46px; border-radius:13px; background:var(--brand-tint);
+  display:grid; place-items:center; font-size:23px;
+}
+.card .t{flex:1; min-width:0}
+.card .t b{display:block; font-size:17px; font-weight:700; letter-spacing:-0.01em}
+.card .t small{display:block; font-size:13.5px; color:var(--ink-faint); font-weight:400; margin-top:2px}
+.card .go{flex:0 0 auto; color:var(--brand); font-size:20px; font-weight:700}
+
+.sign{margin-top:30px; text-align:center; font-size:13px; color:var(--ink-faint)}
+
+@media (max-width:600px){
+  .wrap{padding:0 12px 44px}
+  .hero{margin-top:14px; padding:22px 20px 20px}
+  .hero h1{font-size:23px}
+  .hero p{font-size:15px}
+  .card{padding:14px 15px; gap:13px}
+  .ico{flex-basis:42px; height:42px; font-size:21px}
+  .card .t b{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>מדריכי המתי״א</h1>
+    <p>מדריכי הפעלה קצרים, שלב אחרי שלב, עם סימון מדויק של כל מקום שצריך ללחוץ עליו.</p>
+  </header>
+
+  <h2>המדריכים</h2>
+  <div class="list">
+    <a class="card" href="ics-outlook/">
+      <span class="ico">📅</span>
+      <span class="t">
+        <b>העלאת יומן מקובץ ICS ל-Outlook</b>
+        <small>שמונה שלבים — מיצירת לוח שנה ייעודי ועד אימות שהאירועים נכנסו</small>
+      </span>
+      <span class="go">‹</span>
+    </a>
+  </div>
+
+  <p class="sign">מתי״א · מדריכי הפעלה</p>
+</div>
+</body>
+</html>
