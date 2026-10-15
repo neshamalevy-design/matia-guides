@@ -10,6 +10,7 @@
 |---|---|
 | העלאת יומן מקובץ ICS ל-Outlook | `ics-outlook/` |
 | יצירת טופס ב-Microsoft Forms | `forms/` |
+| תיקיות ומסמכים ב-OneDrive | `onedrive-folders/` |
 
 ## מבנה
 
