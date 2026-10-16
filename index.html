@@ -57,6 +57,17 @@ h2{font-size:14px; font-weight:700; color:var(--ink-faint);
 .card .t small{display:block; font-size:13.5px; color:var(--ink-faint); font-weight:400; margin-top:2px}
 .card .go{flex:0 0 auto; color:var(--brand); font-size:20px; font-weight:700}
 
+h3{font-size:13px; font-weight:700; color:var(--brand); margin:16px 4px 6px}
+.list + h3{margin-top:18px}
+.card.train{border-color:#C4D6E8; background:linear-gradient(0deg,#fff,#F3F8FD)}
+.card.small{padding:11px 16px; box-shadow:none}
+.card.small .ico{flex-basis:36px; height:36px; font-size:18px; border-radius:10px}
+.card.small .t b{font-size:15px}
+.badge{flex:0 0 auto; font-size:12.5px; font-weight:700; color:var(--brand); background:var(--brand-tint);
+  border-radius:999px; padding:3px 10px; white-space:nowrap}
+.back{display:inline-block; color:#fff; opacity:.85; font-size:14px; text-decoration:none; margin-bottom:8px}
+.back:hover{opacity:1; text-decoration:underline}
+
 .sign{margin-top:30px; text-align:center; font-size:13px; color:var(--ink-faint)}
 
 @media (max-width:600px){
@@ -81,16 +92,43 @@ h2{font-size:14px; font-weight:700; color:var(--ink-faint);
     <p>מדריכי הפעלה קצרים, שלב אחרי שלב, עם סימון מדויק של כל מקום שצריך ללחוץ עליו.</p>
   </header>
 
-  <h2>המדריכים</h2>
+  <h2>השתלמויות</h2>
   <div class="list">
-    <a class="card" href="ics-outlook/">
-      <span class="ico">📅</span>
+    <a class="card train" href="art-therapists/">
+      <span class="ico">🎨</span>
       <span class="t">
-        <b>העלאת יומן מקובץ ICS ל-Outlook</b>
-        <small>שמונה שלבים — מיצירת לוח שנה ייעודי ועד אימות שהאירועים נכנסו</small>
+        <b>מטפלות באומנויות · תשפ״ז</b>
+        <small>שלושה מדריכים, לפי סדר המפגשים</small>
       </span>
       <span class="go">‹</span>
     </a>
+  </div>
+
+  <h2>כל המדריכים, לפי כלי</h2>
+  <h3>OneDrive</h3>
+  <div class="list">
+    <a class="card" href="onedrive-folders/">
+      <span class="ico">📁</span>
+      <span class="t">
+        <b>תיקיות ומסמכים ב-OneDrive</b>
+        <small>אחד עשר שלבים — מהכניסה ל-OneDrive, דרך תיקייה לכל ילד, ועד מסמך שנשמר במקום הנכון</small>
+      </span>
+      <span class="go">‹</span>
+    </a>
+  </div>
+  <h3>Word</h3>
+  <div class="list">
+    <a class="card" href="dictation/">
+      <span class="ico">🎙️</span>
+      <span class="t">
+        <b>הכתבה קולית ב-Word</b>
+        <small>חמישה שלבים — ממסמך חדש, דרך ההכתבה, ועד תיקון טעויות בעזרת Copilot</small>
+      </span>
+      <span class="go">‹</span>
+    </a>
+  </div>
+  <h3>Forms</h3>
+  <div class="list">
     <a class="card" href="forms/">
       <span class="ico">📝</span>
       <span class="t">
@@ -99,11 +137,15 @@ h2{font-size:14px; font-weight:700; color:var(--ink-faint);
       </span>
       <span class="go">‹</span>
     </a>
-    <a class="card" href="onedrive-folders/">
-      <span class="ico">📁</span>
+  </div>
+
+  <h2>מדריכים נוספים</h2>
+  <div class="list">
+    <a class="card small" href="ics-outlook/">
+      <span class="ico">📅</span>
       <span class="t">
-        <b>תיקיות ומסמכים ב-OneDrive</b>
-        <small>אחד עשר שלבים — מהכניסה ל-OneDrive, דרך תיקייה לכל ילד, ועד מסמך שנשמר במקום הנכון</small>
+        <b>העלאת יומן מקובץ ICS ל-Outlook</b>
+        <small>שמונה שלבים — מיצירת לוח שנה ייעודי ועד אימות שהאירועים נכנסו</small>
       </span>
       <span class="go">‹</span>
     </a>
