@@ -462,12 +462,15 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>{CSS}</style>
+<style>{CSS}.hero .home{{display:inline-block; color:#fff; opacity:.85; font-size:14px; text-decoration:none; margin-bottom:8px; position:relative; z-index:1}}
+.hero .home:hover{{opacity:1; text-decoration:underline}}
+</style>
 </head>
 <body>
 <div class="wrap">
 
   <header class="hero">
+    <a class="home" href="https://neshamalevy-design.github.io/matia-guides/">→ כל המדריכים</a>
     <p class="kicker">מדריך הפעלה</p>
     <h1>העלאת יומן מקובץ ICS ליומן Outlook</h1>
     <p>שמונה שלבים, מהרגע שפותחים את Outlook ועד שהאירועים מופיעים ביומן. הקישי על שלב כדי לפתוח אותו.</p>
