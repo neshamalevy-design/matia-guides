@@ -21,20 +21,40 @@ def shot(img, alt, w, h, marks, max_w):
     return (f'<figure class="mat" style="max-width:{max_w}px"><div class="shot" data-zoom>'
             f'<img src="data:image/png;base64,{b64}" alt="{alt}" width="{w}" height="{h}">{spans}</div></figure>')
 
-def step(n, title, text, media, one=False):
+def row(text, media, one=False):
     cls = "row one" if one else "row"
+    return f'<div class="{cls}"><div class="text">{text}</div><div class="media">{media}</div></div>'
+
+# pre = שורות (טקסט, תמונה) שבאות בתוך השלב לפני השורה הראשית
+def step(n, title, text, media, one=False, pre=()):
+    rows = "".join(row(*r) for r in pre) + row(text, media, one)
     return (f'<section class="step" id="s{n}"><button class="step-h" aria-expanded="false">'
             f'<span class="num">{n}</span><span class="st">{title}</span><span class="chev" aria-hidden="true"></span></button>'
-            f'<div class="step-b"><div class="{cls}"><div class="text">{text}</div><div class="media">{media}</div></div></div></section>')
+            f'<div class="step-b">{rows}</div></section>')
 
 STEPS = [
     step(1, "נכנסים לקלפלב בהזדהות אחידה",
-         '<p>נכנסים לאתר קלפלב, ומתחברים ב<b>הזדהות אחידה</b> של משרד החינוך.</p>'
-         '<a class="go" href="https://clap-lab.com/" target="_blank" rel="noopener">לכניסה לקלפלב ←</a>'
+         '<h4>נכנסים לאזור האישי</h4>'
          '<p>אחרי הכניסה לוחצים על <b>אייקון הדמות</b> <span class="n">1</span>, באזור האישי.</p>'
          '<div class="rule">לוחצים על העיגול של הדמות, <b>לא</b> על הכפתור הכתום "המשחקים שלי".</div>',
          shot("step-1-profile.png", "אייקון הדמות באזור האישי", 2170, 412,
-              [(84.25, 11.8, 12.5, 65.8, "circ", 1, 84.5, 80)], 760), one=True),
+              [(84.25, 11.8, 12.5, 65.8, "circ", 1, 84.5, 80)], 760), one=True,
+         pre=[
+             ('<p>נכנסים לאתר קלפלב, ולוחצים על <span style="white-space:nowrap"><b>"התחברות"</b> <span class="n">1</span>.</span></p>'
+              '<a class="go" href="https://clap-lab.com/" target="_blank" rel="noopener">לכניסה לקלפלב ←</a>'
+              '<div class="rule">לוחצים על <b>"התחברות"</b>, <b>לא</b> על הכפתור הכתום "ליצירת משחק".</div>',
+              shot("step-1a-login.png", "מסך הפתיחה של קלפלב", 557, 577,
+                   [(40.5, 70.5, 15.6, 6.2, "box", 1, 56.1, 70.5)], 360)),
+             ('<h4>מאשרים את תנאי השימוש</h4>'
+              '<p>נפתח מסך ההתחברות. בראשו כתוב CloseApp: זה המסך שאליו קלפלב מעבירה, הכול תקין.</p><p><b>קודם</b> מסמנים וי בתיבה של אישור התנאים <span class="n">1</span>.</p>'
+              '<div class="tip soft">בלי הווי מופיעה הודעה אדומה, וההתחברות לא עוברת.</div>',
+              shot("step-1b-terms.png", "תיבת אישור תנאי השימוש", 690, 836,
+                   [(82.6, 61.7, 6.4, 5.3, "circ", 1, 89.0, 61.7)], 420)),
+             ('<h4>מתחברים דרך משרד החינוך</h4>'
+              '<p>לוחצים על <b>"התחברות משרד החינוך"</b> <span class="n">1</span>, ומתחברים ב<b>הזדהות אחידה</b>.</p>',
+              shot("step-1c-moe.png", "הכפתור התחברות משרד החינוך", 717, 855,
+                   [(16.5, 19.0, 70.6, 7.0, "box", 1, 87.1, 19.0)], 420)),
+         ]),
     step(2, "בוחרים \"הצטרפות למוסד\"",
          '<p>נפתח תפריט. לוחצים על <b>"הצטרפות למוסד"</b>&nbsp;<span class="n">1</span>.</p>',
          shot("step-2-menu.png", "הפריט הצטרפות למוסד בתפריט", 534, 142,
@@ -69,7 +89,21 @@ BODY = f'''<div class="wrap">
 </div>'''
 
 html = (HERE / "guide-template.html").read_text(encoding="utf8")
+# כרטיס תצוגה לווטסאפ ולרשתות. התמונה ../../claplab/preview.jpg נוצרת מ-preview-card.html
+# (צילום מסך 1200x630 ב-Chrome headless) — היא קובץ נפרד, כי תמונה מוטמעת לא נקראת כתצוגה מקדימה.
+URL = "https://neshamalevy-design.github.io/matia-guides/claplab/"
+META = f'''<meta name="description" content="משייכים את החשבון למוסד, בשלושה שלבים">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:url" content="{URL}">
+<meta property="og:title" content="הצטרפות למנוי בית-ספרי בקלפלב">
+<meta property="og:description" content="משייכים את החשבון למוסד, בשלושה שלבים — הדרכה צעד אחר צעד">
+<meta property="og:image" content="{URL}preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">'''
 html = html.replace("{{TITLE}}", "הצטרפות למנוי בית-ספרי בקלפלב").replace("{{BODY}}", BODY)
+html = html.replace("</title>", "</title>\n" + META, 1)
 OUT.parent.mkdir(exist_ok=True)
 OUT.write_text(html, encoding="utf8")
 print("נכתב:", OUT, f"({OUT.stat().st_size // 1024}KB)")
