@@ -134,6 +134,12 @@
   .co-item.co-hide{opacity:0}
   button.co-next{display:block;margin:16px auto 2px;font:700 17px 'Assistant',Calibri,sans-serif;color:#fff;background:var(--teal);border:0;border-radius:999px;padding:9px 30px;cursor:pointer;box-shadow:0 3px 8px rgba(15,124,128,.25)}
   button.co-next:hover{background:var(--teal-deep)}
+  .co-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:16px auto 2px}
+  .co-nav button.co-next{margin:0}
+  button.co-next.alt{color:var(--teal);background:var(--card);border:1px solid var(--line);box-shadow:none}
+  button.co-next.alt:hover{background:var(--tip)}
+  button.co-next[hidden]{display:none}
+  .row.co-wait{display:none}
 </style>
 </head>
 <body>
@@ -183,25 +189,53 @@
   // the first screen is the menu: one chapter shown at a time, all its steps closed until clicked.
   // the address (#ch-N) keeps the browser's back button working, and "#" returns to the menu.
   // marks appear one at a time: number 1 when the step opens, "הבא" adds the next;
-  // after the last one, "הבא" moves on to the next step; at the end of a chapter it returns to the menu
+  // after the last one, "הבא" moves on to the next step. At the end of a chapter: "continue to the next chapter"
+  // (opens its first step) beside "back to the menu"; the last chapter has only the way back to the menu.
+  const chaps = [...document.querySelectorAll('.chap')];
+  let pendingOpen = null;
   steps.forEach((st, idx) => {
     const items = [...st.querySelectorAll('.co-item')];
     const max = Math.max(0, ...items.map(i => +i.dataset.n));
+    const nav = document.createElement('div'); nav.className = 'co-nav';
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'co-next';
-    st.querySelector('.step-b').appendChild(btn);
+    const menu = document.createElement('button');
+    menu.type = 'button'; menu.className = 'co-next alt'; menu.textContent = 'לתוכן העניינים';
+    nav.append(btn, menu);
+    st.querySelector('.step-b').appendChild(nav);
     const next = steps[idx + 1];
-    const last = !next || next.closest('.chap') !== st.closest('.chap');  // last step of its chapter
+    const chap = st.closest('.chap');
+    const last = !next || next.closest('.chap') !== chap;  // last step of its chapter
+    const nextChap = last ? chaps[chaps.indexOf(chap) + 1] : null;
+    const nextName = nextChap ? nextChap.querySelector('.chapter span').textContent : '';
+    // a long step (several rows of text + picture) also opens row by row: a row appears with its first number;
+    // a row without numbers comes with the row before it
+    const rows = [...st.querySelectorAll('.step-b > .row')];
+    let prev = 1;
+    const rowN = rows.map(r => {
+      const ns = [...r.querySelectorAll('.co-item')].map(i => +i.dataset.n);
+      return prev = ns.length ? Math.min(...ns) : prev;
+    });
     let k = 1;
     const show = () => {
       items.forEach(i => i.classList.toggle('co-hide', +i.dataset.n > k));
-      btn.textContent = (k >= max && last) ? 'סיום הפרק: לתוכן העניינים' : 'הבא ←';
+      rows.forEach((r, j) => r.classList.toggle('co-wait', rowN[j] > k));
+      const end = k >= max && last;
+      btn.textContent = !end ? 'הבא ←' : nextChap ? `המשך ל${nextName} ←` : 'סיום הפרק: לתוכן העניינים';
+      menu.hidden = !(end && nextChap);
     };
     btn.addEventListener('click', () => {
-      if (k < max) { k++; show(); return; }
-      if (last) location.hash = '';
-      else openOnly(next);
+      if (k < max) {
+        k++; show();
+        const r = rows.find((r, j) => rowN[j] === k);  // a row that just appeared: bring it into view
+        if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      if (!last) openOnly(next);
+      else if (nextChap) { pendingOpen = nextChap.querySelector('.step'); location.hash = nextChap.id; }
+      else location.hash = '';
     });
+    menu.addEventListener('click', () => location.hash = '');
     st.coReset = () => { k = 1; show(); };
     show();
   });
@@ -214,6 +248,8 @@
     document.querySelectorAll('.part').forEach(p => p.hidden = !(on && p.contains(c)));
     steps.forEach(o => setOpen(o, false));
     scrollTo(0, 0);
+    if (pendingOpen && on) openOnly(pendingOpen);
+    pendingOpen = null;
   };
   document.querySelectorAll('.toc button').forEach(b => b.addEventListener('click', () => location.hash = b.dataset.ch));
   addEventListener('hashchange', route);
