@@ -17,7 +17,7 @@ import preview_cards as pc                                                    # 
 
 DARK = {'ics-outlook'}        # an older guide with a dark, right-aligned header: no picture, footprints on the right
 DARK_CSS = '<style id="brand-css-dark">.hero .brand-art{display:none!important}.hero .brand-feet{margin:-6px 0 8px auto}</style>'
-PAGES = ['', 'art-therapists', 'middle-school']                               # hub and course pages: the signature only
+PAGES = ['', 'art-therapists', 'middle-school', 'kindergarten-inclusion-ai']                               # hub and course pages: the signature only
 GUIDES = ['onedrive-folders', 'dictation', 'tzafonet-word', 'read-dictate', 'forms', 'ics-outlook', 'safe-domains', 'claplab', 'copy-shared-folder']
 
 
