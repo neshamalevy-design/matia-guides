@@ -1,5 +1,5 @@
 """The cards' identity at the top of every guide: the small footprints "צעד צעד" in place of the kicker, and the fixed
-picture small beside the title (desktop only; on a phone the footprints and the title stay, so the menu is seen at once).
+picture beside the title, in one row: footprints right, picture left (desktop only; on a phone the footprints and the title stay, so the menu is seen at once).
 Everything is embedded in the page (data URIs), so a guide still works as a single file.
 
 Also a small signature at the bottom of every page (guides, course pages and the hub).
@@ -51,6 +51,17 @@ def emblem_jpg():
 
 CSS = """<style id="brand-css">
   header.hero{position:relative}
+  .hero .brand-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:28px;margin:6px 0 10px}
+  .hero .brand-row h1{margin:0}
+  .hero .brand-feet{display:block;height:110px;width:auto;margin:0;justify-self:end}
+  .hero .brand-art{display:block;height:170px;width:auto;margin:-30px -14px -30px 0;justify-self:start;pointer-events:none;
+    -webkit-mask-image:radial-gradient(ellipse 50% 50% at center,#000 70%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at center,#000 70%,transparent 100%)}
+  .hero .kicker{display:none}
+  @media (max-width:820px){ .hero .brand-row{display:block} .hero .brand-art{display:none} .hero .brand-feet{height:auto;width:104px;margin:-6px auto 8px} }
+</style>"""
+# an older guide with a dark header (DARK): no row, the footprints alone above the title, as before
+OLD_CSS = """<style id="brand-css">
+  header.hero{position:relative}
   .hero .brand-feet{display:block;width:118px;height:auto;margin:-6px auto 8px}
   .hero .brand-art{position:absolute;top:10px;left:14px;width:140px;height:auto;pointer-events:none;
     -webkit-mask-image:radial-gradient(ellipse 50% 50% at center,#000 70%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at center,#000 70%,transparent 100%)}
@@ -79,13 +90,20 @@ def inject(folder, feet, art):
     h = p.read_text(encoding='utf8')
     h = re.sub(r'\n?<style id="brand-css(?:-dark)?">.*?</style>', '', h, flags=re.S)    # a re-run replaces the old one
     h = re.sub(r'<img class="brand-(?:feet|art)"[^>]*>', '', h)
+    h = h.replace('<div class="brand-row">', '').replace('</div><!--/brand-row-->', '')
     h = sign(h)
-    h = h.replace('</head>', CSS + ('\n' + DARK_CSS if folder in DARK else '') + '\n</head>', 1)
+    dark = folder in DARK
+    h = h.replace('</head>', (OLD_CSS + '\n' + DARK_CSS if dark else CSS) + '\n</head>', 1)
     art_tag = f'<img class="brand-art" src="{art}" alt="">'
     feet_tag = f'<img class="brand-feet" src="{feet}" alt="צעד צעד">'
-    h = h.replace('<header class="hero">', '<header class="hero">' + art_tag, 1)
     i = h.index('<h1>', h.index('<header class="hero">'))
-    h = h[:i] + feet_tag + h[i:]
+    j = h.index('</h1>', i) + len('</h1>')
+    if dark:
+        h = h.replace('<header class="hero">', '<header class="hero">' + art_tag, 1)
+        h = h[:i + len(art_tag)] + feet_tag + h[i + len(art_tag):]
+    else:
+        # one row (Nechama 2026-10-26): the footprints right of the title, the picture left of it, at the same distance
+        h = h[:i] + '<div class="brand-row">' + feet_tag + h[i:j] + art_tag + '</div><!--/brand-row-->' + h[j:]
     p.write_text(h, encoding='utf8')
 
 
