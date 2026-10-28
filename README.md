@@ -11,6 +11,7 @@
 | תיקיות ומסמכים ב-OneDrive | OneDrive | `onedrive-folders/` |
 | הכתבה קולית ב-Word | Word | `dictation/` |
 | יצירת טופס ב-Microsoft Forms | Forms | `forms/` |
+| שכפול טופס Forms ויצירת עותקים (מקישור לשכפול, ועוד עותקים מאותו טופס) | Forms | `forms-copy/` |
 | כניסה ל-Word דרך צפונט | Word | `tzafonet-word/` |
 | הקראה והכתבה ב-Word | Word | `read-dictate/` |
 | הצטרפות למנוי בית-ספרי בקלפלב | קלפלב | `claplab/` |

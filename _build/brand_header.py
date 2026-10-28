@@ -18,7 +18,7 @@ import preview_cards as pc                                                    # 
 DARK = {'ics-outlook'}        # an older guide with a dark, right-aligned header: no picture, footprints on the right
 DARK_CSS = '<style id="brand-css-dark">.hero .brand-art{display:none!important}.hero .brand-feet{margin:-6px 0 8px auto}</style>'
 PAGES = ['', 'art-therapists', 'middle-school', 'kindergarten-inclusion-ai']                               # hub and course pages: the signature only
-GUIDES = ['onedrive-folders', 'dictation', 'tzafonet-word', 'read-dictate', 'forms', 'ics-outlook', 'safe-domains', 'claplab', 'copy-shared-folder', 'share-document', 'open-shared-document', 'iep-copilot', 'tachi-agent', 'tachi-agent-lite']
+GUIDES = ['onedrive-folders', 'dictation', 'tzafonet-word', 'read-dictate', 'forms', 'ics-outlook', 'safe-domains', 'claplab', 'copy-shared-folder', 'share-document', 'open-shared-document', 'iep-copilot', 'tachi-agent', 'tachi-agent-lite', 'forms-copy']
 
 
 def feet_png():
@@ -73,16 +73,17 @@ SIGN_CSS = """<style id="brand-sign-css">
   .brand-sign{margin:-30px auto 28px;text-align:center;font:400 13.5px/1.55 'Assistant',Calibri,Arial,sans-serif;color:#7d8f92}
   .brand-sign b{font-weight:600;color:#5b6f72}
 </style>"""
-SIGN = '<footer class="brand-sign">נבנה ע״י <b>נחמה לוי</b><br>רכזת תקשוב · מתי״א טבריה · מתי״א כרמיאל</footer>'
+SIGN = '<footer class="brand-sign">נבנה ע״י <b>נחמה לוי</b>{cc}<br>רכזת תקשוב · מתי״א טבריה · מתי״א כרמיאל</footer>'
+CLAUDE_CODE = {'forms-copy'}   # guides whose signature adds "(בעזרת קלוד קוד)" after the name (Nechama, 2026-10-28)
 
 
-def sign(h):
+def sign(h, folder=''):
     """the small signature at the bottom of the page (every screen of a guide)."""
     h = re.sub(r'\n?<style id="brand-sign-css">.*?</style>', '', h, flags=re.S)
     h = re.sub(r'<footer class="brand-sign">.*?</footer>\n?', '', h, flags=re.S)
     h = h.replace('</head>', SIGN_CSS + '\n</head>', 1)
     i = h.rindex('</body>')
-    return h[:i] + SIGN + '\n' + h[i:]
+    return h[:i] + SIGN.format(cc=' (בעזרת קלוד קוד)' if folder in CLAUDE_CODE else '') + '\n' + h[i:]
 
 
 def inject(folder, feet, art):
@@ -91,7 +92,7 @@ def inject(folder, feet, art):
     h = re.sub(r'\n?<style id="brand-css(?:-dark)?">.*?</style>', '', h, flags=re.S)    # a re-run replaces the old one
     h = re.sub(r'<img class="brand-(?:feet|art)"[^>]*>', '', h)
     h = h.replace('<div class="brand-row">', '').replace('</div><!--/brand-row-->', '')
-    h = sign(h)
+    h = sign(h, folder)
     dark = folder in DARK
     h = h.replace('</head>', (OLD_CSS + '\n' + DARK_CSS if dark else CSS) + '\n</head>', 1)
     art_tag = f'<img class="brand-art" src="{art}" alt="">'
