@@ -13,6 +13,7 @@
 | יצירת טופס ב-Microsoft Forms | Forms | `forms/` |
 | שכפול טופס Forms ויצירת עותקים (מקישור לשכפול, עוד עותקים מאותו טופס, ושיתוף למילוי) | Forms | `forms-copy/` |
 | יצירת עותק של טופס גוגל (טופס אפיון התלמיד בגוגל של צפונט: פרסום, מילוי, גיליון תשובות, חיפוש ב-Drive). **לא כפילות של `forms-copy/`**, שהוא Microsoft Forms | Google Forms | `google-forms-copy/` |
+| מחברת ההתאמות: מהטופס ועד דף לתלמיד (טופס מאפייני התלמידים, עותק של מחברת NotebookLM, דף עבודה מותאם בכלי daf-avoda-mutam) | NotebookLM | `notebooklm-adaptations/` |
 | כניסה ל-Word דרך צפונט | Word | `tzafonet-word/` |
 | הקראה והכתבה ב-Word | Word | `read-dictate/` |
 | הצטרפות למנוי בית-ספרי בקלפלב | קלפלב | `claplab/` |
