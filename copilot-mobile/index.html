@@ -342,9 +342,17 @@
     .pstage{position:relative}
     .pf{border-width:6px;border-radius:24px}
     .pi img{border-radius:18px}
-    .pbub{display:block;position:absolute;left:6px;right:6px;z-index:4;background:#fff;border-radius:16px;padding:14px 16px;
-          box-shadow:0 10px 28px rgba(0,0,0,.22);transition:top .3s}
-    .pbub .cnt{font:700 14px 'Assistant',sans-serif;color:var(--mk);margin-bottom:4px}
+    /* Nechama 2026-11-22: a white bubble melted into the white screenshots — the bubble is dark, with an arrow to its mark */
+    .pbub{display:block;position:absolute;left:6px;right:6px;z-index:4;background:var(--teal-deep);color:#fff;border-radius:16px;
+          padding:14px 16px;box-shadow:0 12px 30px rgba(0,0,0,.35);transition:top .3s}
+    .pbub::before{content:'';position:absolute;left:var(--ax,50%);width:18px;height:18px;margin-left:-9px;background:var(--teal-deep);transform:rotate(45deg)}
+    .pbub.down::before{top:-8px} .pbub.up::before{bottom:-8px}
+    .pbub b{color:#fff}
+    .pbub .cnt{font:700 14px 'Assistant',sans-serif;color:#ffc9b0;margin-bottom:4px}
+    .pbub .pnav .pnext{background:#fff;color:var(--teal-deep);border-color:#fff}
+    .pbub .pnav .pback,.pbub .pnav .pmenu{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+    .pbub .pout{color:var(--ink)}
+    .pbub .prompt b,.pbub .pout b{color:var(--ink)}
     .pbub .txt{font-size:18px;line-height:1.55;margin-bottom:12px}
     .pbub .pout{font-size:16px;margin:0 0 12px}
     .pbub .pnav button{font-size:17px;padding:8px 20px}
@@ -381,8 +389,12 @@
         // under the mark; a mark low on the screen gets the bubble above it. A bubble that runs past the picture
         // makes room for itself under it, so it never covers its own mark
         const above = top + h * +mark.dataset.y - bub.offsetHeight - 40;
-        const y = (+mark.dataset.b > .66 && above > top) ? above : top + h * +mark.dataset.b + 16;
+        const up = +mark.dataset.b > .66 && above > top;
+        const y = up ? above : top + h * +mark.dataset.b + 16;
         bub.style.top = y + 'px';
+        bub.classList.toggle('up', up); bub.classList.toggle('down', !up);
+        const mr = mark.getBoundingClientRect(), br = bub.getBoundingClientRect();
+        bub.style.setProperty('--ax', Math.min(br.width - 22, Math.max(22, mr.left + mr.width / 2 - br.left)) + 'px');
         stage.style.paddingBottom = Math.max(0, y + bub.offsetHeight + 12 - (top + h)) + 'px';
         if (scroll) { const r = mark.getBoundingClientRect(); if (r.top < 60 || r.bottom > innerHeight * .45) scrollTo({ top: scrollY + r.top - innerHeight * .2, behavior: 'smooth' }); }
       } else {
