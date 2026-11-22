@@ -332,6 +332,10 @@
   /* the pictures are drawn at 800 and shown at 440: the number pins would shrink to ~8px, so they are drawn bigger */
   .co-pin{r:21px}
   .co-num{font-size:25px}
+  /* Nechama 2026-11-22: on a phone a full screenshot pushes "הבא" below the screen. The step's buttons stick to
+     the bottom of the screen while it is open (overflow:clip, not hidden, so that sticky works inside the card) */
+  .step{overflow:clip!important}
+  .step.open .co-nav{position:sticky;bottom:0;z-index:5;background:#fff;padding:10px 0 12px;box-shadow:0 -6px 12px rgba(0,0,0,.08)}
   .prompt{margin:10px 0 12px;background:#f7fafa;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
   .prompt p{font-size:15.5px;line-height:1.65;white-space:pre-line;margin-bottom:10px}
   .prompt button{font:700 15px 'Assistant',sans-serif;color:#fff;background:var(--teal);border:0;border-radius:999px;padding:6px 18px;cursor:pointer}
